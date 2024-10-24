@@ -1,0 +1,138 @@
+import time
+import lib.Functions as f
+
+PlayerHealth=10
+PlayerDefence=1
+PlayerAttack=1
+money=500
+
+DefenseItemStrength={'Iron Armour':3,
+                         'Distracting Jewels':2,
+                         '"How to defend yourself 101"':1,
+                         'Invisibility potion':4,
+                         'Super Shield':5}
+DefenseItemCost={'Iron Armour':300,
+                     'Distracting Jewels':200,
+                     '"How to defend yourself 101"':100,
+                     'Invisibility potion':400,
+                     'Super Shield':600}
+AttackItemStrength={'Claw Sharpener':1,
+                    'Super energy potion':3,
+                    '"Breathing fire 101"':4,
+                    'Wing spikes':2,
+                    'Iron teeth':5}
+AttackItemCost={'Claw Sharpener':100,
+                    'Super energy potion':300,
+                    '"Breathing fire 101"':400,
+                    'Wing spikes':200,
+                    'Iron teeth':600}
+
+def ShowMoney():
+    print("You currently have "+str(money)+" gold bits.")
+
+def ShowPoints():
+    print("You have "+str(PlayerAttack)+" ATTACK points.")
+    print("You have "+str(PlayerDefence)+" DEFENCE points.")
+
+def ShowItems():
+    for key in DefenseItemCost:
+        print(key)
+        print(str(DefenseItemStrength[key])+" points for DEFENCE.")
+        print("Price:"+str(DefenseItemCost[key])+"\n")
+    for key in AttackItemCost:
+        print(key)
+        print(str(AttackItemStrength[key])+" points for ATTACK.")
+        print("Price:"+str(AttackItemCost[key])+"\n")
+
+
+
+def Market():
+    global money, PlayerAttack, PlayerDefence
+    print("These are the available items at the market:\nRemember you will have the oppurtunity to go to the market again. \nWhen you win a battle you can collect gold bits to then spend at the market.")
+    time.sleep(5)
+    ShowItems()
+    ShowMoney()
+    ShowPoints()
+    AorD=""
+    while AorD !="EXIT":
+        AorD=input("\nDo you want to buy an ATTACK(a) item or a DEFEND(d) item? (If you wish to leave type EXIT. To see the item menu type MENU.)").upper()
+        if AorD=="A":
+            BuyItem(AttackItemCost, AttackItemStrength, AorD)
+        elif AorD=="D":
+            BuyItem(DefenseItemCost, DefenseItemStrength, AorD)
+        elif AorD=="MENU":
+            ShowItems()
+        elif AorD!="EXIT":
+            print("This is not an answer.")
+
+def BuyItem(ItemCost,ItemStrength,AorD):
+    global PlayerAttack, PlayerDefence, money, DefenseItemStrength, DefenseItemCost, AttackItemStrength, AttackItemCost
+    itemName=input("Type the item here.>").upper()
+    validkey=False
+    for key in ItemCost:
+        if itemName==key.upper():
+            validkey=True
+            if ItemCost[key] > money:
+                print("You do not have enough money to buy this item.")
+            else:
+                confirm=""
+                while confirm!="yes" and confirm!="no":
+                    confirm=input("Are you sure you want to buy "+str(key)+" for "+str(ItemCost[key])+"?").lower()
+                    if confirm=="yes":
+                        print("\nYou have bought "+str(key))
+                        money = money - ItemCost[key]
+                        if AorD=="A":
+                            PlayerAttack = PlayerAttack + ItemStrength[key]
+                        else:
+                            PlayerDefence = PlayerDefence + ItemStrength[key]
+                        ShowPoints()
+                        ShowMoney()
+                        del ItemStrength[key]
+                        del ItemCost[key]
+                        return
+                    elif confirm!="no":
+                        print("That is not an answer.")
+    if validkey==False:
+        print("This is not an item")
+
+SpecialPowersTime = {'Ice':6,
+                     'Fire':3,
+                     'Storm':2,
+                     'Acid':5,
+                     'Electricity':2}
+SpecialPowersDamage = {'Ice':1,
+                     'Fire':2,
+                     'Storm':3,
+                     'Acid':1,
+                     'Electricity':4}
+SpecialPowersName = {'i':'Ice',
+                     'f':'Fire',
+                     's':'Storm',
+                     'a':'Acid',
+                     'e':'Electricity'}
+
+
+def ChooseSpecialPower():
+    global PlayerSpecial, PlayerSpecialTime,PlayerSpecialDamage
+    print("\nIn addition to being able to attack and defend your dragon is able to use ONE Special Power. \nThis Special Power can only be used when an enemy is defending, but it's effect can carry on for more turns.")
+    print("If an enemy attacks while you use your special power youe will recieve damage as your dragon is caught off guard while building up energy for the power.")
+    for key in SpecialPowersDamage:
+        print(str(key)+" delivers "+str(SpecialPowersDamage[key])+" damage for "+str(SpecialPowersTime[key])+" turns.")
+    key=''
+    while True:
+        answer= input("Choose your special power: Ice(i), Fire(f), Storm(s), Acid(a), or Electricity(e).").lower()
+        if answer in SpecialPowersName:
+            name=SpecialPowersName[answer]
+            PlayerSpecial= name
+            PlayerSpecialDamage = SpecialPowersDamage[name]
+            PlayerSpecialTime = SpecialPowersTime[name]
+            print("Your special power is "+str(PlayerSpecial)+".")
+            break
+        else:
+            print("This is not a valid answer. Please try again.")
+
+
+
+
+ChooseSpecialPower()
+
